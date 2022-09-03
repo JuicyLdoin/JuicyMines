@@ -88,7 +88,9 @@ public class MineManager implements IUnLoadable {
 
             // Если шахта с именем {name} удаляем её из списка и отключаем
 
+            getMineFile(mine).delete();
             mine.delete();
+
             mines.remove(name);
 
         }
