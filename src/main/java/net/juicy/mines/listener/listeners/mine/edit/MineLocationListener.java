@@ -1,7 +1,7 @@
 package net.juicy.mines.listener.listeners.mine.edit;
 
 import net.juicy.api.utils.util.LocationUtil;
-import net.juicy.mines.JuicyMines;
+import net.juicy.mines.JuicyMinesPlugin;
 import net.juicy.mines.mine.Mine;
 import net.juicy.mines.mine.options.MineOptions;
 import org.bukkit.entity.Player;
@@ -15,7 +15,7 @@ public class MineLocationListener implements IMineEditor {
 
     public static final MineLocationListener mineLocations = new MineLocationListener();
 
-    private final JuicyMines plugin = JuicyMines.getPlugin();
+    private final JuicyMinesPlugin plugin = JuicyMinesPlugin.getPlugin();
 
     private final Map<Player, Mine> mines = new HashMap<>();
     private final Map<Player, String> locations = new HashMap<>();

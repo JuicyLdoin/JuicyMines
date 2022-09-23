@@ -1,9 +1,2 @@
 prefix: "&e&lJuicyMines &f>>"
 debug: true
-
-options:
-  pattern:
-    amount: 10
-    cycle: false
-
-Mines:

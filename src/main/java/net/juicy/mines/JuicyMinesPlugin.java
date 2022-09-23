@@ -1,6 +1,7 @@
 package net.juicy.mines;
 
 import lombok.Getter;
+import net.juicy.api.JuicyAPIPlugin;
 import net.juicy.api.JuicyPlugin;
 import net.juicy.api.utils.command.CommandManager;
 import net.juicy.api.utils.load.Loader;
@@ -12,28 +13,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-public final class JuicyMines extends JuicyPlugin {
+public final class JuicyMinesPlugin extends JuicyPlugin {
 
-    public static JuicyMines getPlugin() {
+    public static JuicyMinesPlugin getPlugin() {
 
-        return (JuicyMines) getJuicyPlugin(JuicyMines.class);
+        return getPlugin(JuicyMinesPlugin.class);
 
     }
 
-    private String prefix;
-    private boolean debug;
-
     private MineManager mineManager;
+    private Loader loader;
 
     public void onEnable() {
 
-        prefix = replace(getConfig().getString("prefix"));
-        debug = getConfig().getBoolean("debug");
-
         mineManager = new MineManager();
 
-        Loader.loader.load(mineManager);
-        Loader.loader.load(new ListenersManager());
+        loader = JuicyAPIPlugin.getPlugin().getLoader();
+
+        loader.load(mineManager);
+        loader.load(new ListenersManager());
 
         try {
 
@@ -45,7 +43,7 @@ public final class JuicyMines extends JuicyPlugin {
             classes.add(MineFillCommand.class);
             classes.add(MineHelpCommand.class);
 
-            Loader.loader.load(new CommandManager(this, getCommand("juicymines").getAliases(), classes));
+            loader.load(new CommandManager(this, getCommand("juicymines").getAliases(), classes));
 
         } catch (Exception exception) {
 
@@ -56,7 +54,20 @@ public final class JuicyMines extends JuicyPlugin {
 
     public void onDisable() {
 
-        Loader.loader.unload(mineManager);
+        loader.unload(mineManager);
+
+    }
+
+    public String getPrefix() {
+
+        return "§e§lJuicyMines §f>> ";
+
+    }
+
+    public void reload() {
+
+        mineManager = new MineManager();
+        loader.load(mineManager);
 
     }
 }

@@ -2,8 +2,9 @@ package net.juicy.mines.mine;
 
 import lombok.Getter;
 import lombok.Setter;
+import net.juicy.api.utils.log.JuicyLoggerElement;
 import net.juicy.api.utils.util.LocationUtil;
-import net.juicy.mines.JuicyMines;
+import net.juicy.mines.JuicyMinesPlugin;
 import net.juicy.mines.mine.options.MineOptions;
 import net.juicy.mines.mine.options.PatternOptions;
 import net.juicy.mines.mine.pattern.MinePattern;
@@ -24,19 +25,23 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.IntStream;
 
 @Getter
 @Setter
 public class Mine {
 
-    final JuicyMines plugin = JuicyMines.getPlugin();
+    final JuicyMinesPlugin plugin = JuicyMinesPlugin.getPlugin();
+
     String name;
+    JuicyLoggerElement logger;
 
     MineOptions mineOptions;
 
     public Mine(String name, Location minLocation, Location maxLocation, int resetTime, Map<Material, Double> blocks) {
 
         this.name = name;
+        logger = new JuicyLoggerElement(name, JuicyMinesPlugin.getPlugin().getMineManager().getMineLogger());
 
         mineOptions = new MineOptions(minLocation, maxLocation, resetTime, resetTime, new MinePatternCache(this, new LinkedList<>()), blocks, runTask(), new PatternOptions(3, false), 0, 0, 50);
 
@@ -47,6 +52,7 @@ public class Mine {
         ConfigurationSection mineSection = YamlConfiguration.loadConfiguration(file).getConfigurationSection("Mine");
 
         name = mineSection.getString("name");
+        logger = new JuicyLoggerElement(name, JuicyMinesPlugin.getPlugin().getMineManager().getMineLogger());
 
         String stringBlocks = mineSection.getString("blocks");
         Map<Material, Double> blocks = new HashMap<>();
@@ -92,7 +98,7 @@ public class Mine {
 
                 });
 
-        if (plugin.isDebug()) Bukkit.getConsoleSender().sendMessage("Mine " + name + " filled and generate new pattern");
+        logger.addMessage("Mine " + name + " filled and generate new pattern");
 
     }
 
@@ -106,12 +112,11 @@ public class Mine {
 
         // Генерирует {amount} паттернов
 
-        if (plugin.isDebug())
-            Bukkit.getConsoleSender().sendMessage("Generating " + amount + " patterns for mine " + name);
+        logger.addMessage("Generating " + amount + " patterns for mine " + name);
 
         List<MinePattern> patterns = new ArrayList<>();
 
-        for (int i = 0; i < amount; i++) patterns.add(generatePattern());
+        IntStream.range(0, amount).forEach(i -> patterns.add(generatePattern()));
 
         return patterns;
 
@@ -126,13 +131,13 @@ public class Mine {
 
         mineOptions.getPatternCache().getPatternQueue().offer(minePattern);
 
-        if (plugin.isDebug()) Bukkit.getConsoleSender().sendMessage("MinePattern (" + minePattern.getUuid() + ") created for mine " + name);
+        logger.addMessage("MinePattern (" + minePattern.getUuid() + ") created for mine " + name);
 
         // Запускает новый поток для генерации
 
         new Thread(() -> {
 
-            if (plugin.isDebug()) Bukkit.getConsoleSender().sendMessage("Start to generate pattern (" + minePattern.getUuid() + ") for " + name);
+            logger.addMessage("Start to generate pattern (" + minePattern.getUuid() + ") for " + name);
 
             long start = System.currentTimeMillis();
 
@@ -144,20 +149,20 @@ public class Mine {
             List<ChanceCalculator> chances = ChanceCalculator.calculate(mineOptions.getBlocks());
 
             if (!chances.isEmpty())
-                for (int x = minLocation.getBlockX(); x <= maxLocation.getBlockX(); x++)
-                    for (int y = minLocation.getBlockY(); y <= maxLocation.getBlockY(); y++)
-                        for (int z = minLocation.getBlockZ(); z <= maxLocation.getBlockZ(); z++) {
+                IntStream.range(minLocation.getBlockX(), maxLocation.getBlockX())
+                        .forEach(x ->
+                                IntStream.range(minLocation.getBlockX(), maxLocation.getBlockX())
+                                .forEach(y ->
+                                        IntStream.range(minLocation.getBlockX(), maxLocation.getBlockX())
+                                        .forEach(z -> {
 
-                            double random = ThreadLocalRandom.current().nextDouble();
+                                            double random = ThreadLocalRandom.current().nextDouble();
 
-                            for (ChanceCalculator chance : chances)
-                                if (random <= chance.getChance()) {
+                                            chances.stream()
+                                                    .filter(chance -> random <= chance.getChance())
+                                                    .forEach(chance -> minePattern.addBlock(new MinePatternBlock(new Location(minLocation.getWorld(), x, y, z), chance.getBlock())));
 
-                                    minePattern.addBlock(new MinePatternBlock(new Location(minLocation.getWorld(), x, y, z), chance.getBlock()));
-                                    break;
-
-                                }
-                        }
+                                        })));
 
             // Устанавливает статус паттерна как сгенерированный
 
@@ -166,8 +171,7 @@ public class Mine {
             minePattern.setState(MinePatternState.GENERATED);
             minePattern.setGeneratedPer(System.currentTimeMillis() - start);
 
-            if (plugin.isDebug())
-                Bukkit.getConsoleSender().sendMessage("The pattern (" + minePattern.getUuid() + ") for mine " + name + " was generated for " + minePattern.getGeneratedPer() + "ms");
+            logger.addMessage("The pattern (" + minePattern.getUuid() + ") for mine " + name + " was generated for " + minePattern.getGeneratedPer() + "ms");
 
         }, name + "PatternGenerator-" + (mineOptions.getPatternCache().getPatternsWithState(MinePatternState.GENERATION).size() + 1)).start();
 
@@ -214,6 +218,11 @@ public class Mine {
             exception.printStackTrace();
 
         }
+
+        logger.addMessage("SAVED");
+
+        logger.save();
+
     }
 
     public void delete() {

@@ -3,7 +3,6 @@ package net.juicy.mines.mine.options;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import net.juicy.api.bukkit.JuicyPlayer;
 import net.juicy.mines.mine.pattern.MinePatternCache;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -71,12 +70,6 @@ public class MineOptions {
     }
 
     public boolean isInside(Player player) {
-
-        return isInside(player.getLocation());
-
-    }
-
-    public boolean isInside(JuicyPlayer player) {
 
         return isInside(player.getLocation());
 

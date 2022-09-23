@@ -1,10 +1,13 @@
 name: JuicyMines
 version: '${project.version}'
-main: net.juicy.mines.JuicyMines
-author: Ldoin
+
+main: net.juicy.mines.JuicyMinesPlugin
+
 depend:
   - JuicyAPI
 api-version: 1.18
+author: Ldoin
+
 commands:
   juicymines:
     aliases: [ juicymines, jmines, jm ]

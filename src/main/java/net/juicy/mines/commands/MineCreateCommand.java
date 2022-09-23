@@ -2,13 +2,13 @@ package net.juicy.mines.commands;
 
 import net.juicy.api.utils.command.Command;
 import net.juicy.api.utils.command.ICommand;
-import net.juicy.mines.JuicyMines;
+import net.juicy.mines.JuicyMinesPlugin;
 import net.juicy.mines.mine.MineManager;
 import org.bukkit.command.CommandSender;
 
 public class MineCreateCommand implements ICommand {
 
-    private final JuicyMines plugin = JuicyMines.getPlugin();
+    private final JuicyMinesPlugin plugin = JuicyMinesPlugin.getPlugin();
 
     @Command(aliases = "create", permissions = "juicymines.*")
     public void onCommand(CommandSender commandSender, String[] args) {
@@ -20,7 +20,7 @@ public class MineCreateCommand implements ICommand {
 
         }
 
-        MineManager mineManager = JuicyMines.getPlugin().getMineManager();
+        MineManager mineManager = JuicyMinesPlugin.getPlugin().getMineManager();
 
         String name = args[0];
 
@@ -28,7 +28,7 @@ public class MineCreateCommand implements ICommand {
             commandSender.sendMessage(plugin.replace("%prefix% &cШахта с именем " + name + " уже создана, используйте другое имя!"));
         else {
 
-            JuicyMines.getPlugin().getMineManager().create(name);
+            JuicyMinesPlugin.getPlugin().getMineManager().create(name);
             commandSender.sendMessage(plugin.replace("%prefix% &fШахта с именем &e" + name + " &fуспешно создана!"));
 
         }

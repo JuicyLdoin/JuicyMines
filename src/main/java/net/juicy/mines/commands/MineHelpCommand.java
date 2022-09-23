@@ -2,12 +2,12 @@ package net.juicy.mines.commands;
 
 import net.juicy.api.utils.command.Command;
 import net.juicy.api.utils.command.ICommand;
-import net.juicy.mines.JuicyMines;
+import net.juicy.mines.JuicyMinesPlugin;
 import org.bukkit.command.CommandSender;
 
 public class MineHelpCommand implements ICommand {
 
-    private final JuicyMines plugin = JuicyMines.getPlugin();
+    private final JuicyMinesPlugin plugin = JuicyMinesPlugin.getPlugin();
 
     @Command(aliases = "help", permissions = "juicymines.*")
     public void onCommand(CommandSender commandSender, String[] args) {

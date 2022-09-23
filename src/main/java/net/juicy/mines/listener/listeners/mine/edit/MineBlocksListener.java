@@ -1,6 +1,5 @@
 package net.juicy.mines.listener.listeners.mine.edit;
 
-import net.juicy.api.bukkit.inventory.JuicyInventory;
 import net.juicy.api.utils.util.ItemUtil;
 import net.juicy.mines.mine.Mine;
 import net.juicy.mines.mine.options.MineOptions;
@@ -114,16 +113,16 @@ public class MineBlocksListener implements IMineEditor {
 
         MineOptions mineOptions = mine.getMineOptions();
 
-        Inventory inventory = JuicyInventory.createInventory(18, "§e" + mine.getName() + " Блоки").getInventory();
+        Inventory inventory = Bukkit.createInventory(null, 18, "§e" + mine.getName() + " Блоки");
 
         for (int i = 0; i < inventory.getSize(); i++)
-            inventory.setItem(i, ItemUtil.getItem(Material.GRAY_STAINED_GLASS_PANE, 1, (short) 0, ""));
+            inventory.setItem(i, ItemUtil.getItem(Material.GRAY_STAINED_GLASS_PANE, 1, ""));
 
         int blocksDisplayed = 0;
 
         for (Map.Entry<Material, Double> blocks : mineOptions.getBlocks().entrySet()) {
 
-            inventory.setItem(blocksDisplayed, ItemUtil.getItem(blocks.getKey(), 1, (short) 0, "§e" + blocks.getKey().name(),
+            inventory.setItem(blocksDisplayed, ItemUtil.getItem(blocks.getKey(), 1, "§e" + blocks.getKey().name(),
                     "",
                     "§fШанс: §e" + blocks.getValue() + "%",
                     "",

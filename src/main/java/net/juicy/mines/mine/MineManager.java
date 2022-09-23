@@ -1,8 +1,10 @@
 package net.juicy.mines.mine;
 
-import lombok.Getter;
+import lombok.Value;
 import net.juicy.api.utils.load.IUnLoadable;
-import net.juicy.mines.JuicyMines;
+import net.juicy.api.utils.log.JuicyLogger;
+import net.juicy.api.utils.log.JuicyLoggerElement;
+import net.juicy.mines.JuicyMinesPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
@@ -10,11 +12,14 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
-@Getter
+@Value
 public class MineManager implements IUnLoadable {
 
-    private final JuicyMines plugin = JuicyMines.getPlugin();
-    private final Map<String, Mine> mines = new HashMap<>();
+    JuicyMinesPlugin plugin = JuicyMinesPlugin.getPlugin();
+    Map<String, Mine> mines = new HashMap<>();
+
+    JuicyLogger mineLogger = new JuicyLogger(plugin, "mines");
+    JuicyLoggerElement mineElement = new JuicyLoggerElement("mines", mineLogger);
 
     public void load() {
 
@@ -28,9 +33,11 @@ public class MineManager implements IUnLoadable {
 
                 mines.put(mine.getName(), mine);
 
+                mineElement.addMessage("Mine loaded " + mine.getName());
+
             }
 
-        Bukkit.getConsoleSender().sendMessage("Loaded " + mines.size() + " mines");
+        mineElement.addMessage("Loaded " + mines.size() + " mines");
 
     }
 
@@ -62,6 +69,8 @@ public class MineManager implements IUnLoadable {
         mine.save(getMineFile(mine));
 
         mines.put(name, mine);
+
+        mineElement.addMessage("Created mine " + mine.getName());
 
         return mine;
 
@@ -106,6 +115,9 @@ public class MineManager implements IUnLoadable {
 
         for (Mine mine : mines.values())
             mine.save(getMineFile(mine));
+
+        mineElement.save();
+        mineLogger.save();
 
     }
 }

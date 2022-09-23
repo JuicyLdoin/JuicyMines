@@ -1,6 +1,6 @@
 package net.juicy.mines.listener.listeners.mine.edit;
 
-import net.juicy.mines.JuicyMines;
+import net.juicy.mines.JuicyMinesPlugin;
 import net.juicy.mines.mine.Mine;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -13,7 +13,7 @@ public class MineRenameListener implements IMineEditor {
 
     public static final MineRenameListener mineRename = new MineRenameListener();
 
-    private final JuicyMines plugin = JuicyMines.getPlugin();
+    private final JuicyMinesPlugin plugin = JuicyMinesPlugin.getPlugin();
     private final Map<Player, Mine> nameEdit = new HashMap<>();
 
     public void createForPlayer(Player player, Mine mine) {
