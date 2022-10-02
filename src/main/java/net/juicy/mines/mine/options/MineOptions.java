@@ -16,23 +16,23 @@ import java.util.Map;
 @AllArgsConstructor
 public class MineOptions {
 
-    Location minLocation;
-    Location maxLocation;
+    private Location minLocation;
+    private Location maxLocation;
 
-    int resetTime;
-    int toReset;
+    private int resetTime;
+    private int toReset;
 
-    MinePatternCache patternCache;
-    Map<Material, Double> blocks;
+    private MinePatternCache patternCache;
+    private Map<Material, Float> blocks;
 
-    int taskID;
+    private int taskID;
 
-    PatternOptions patternOptions;
+    private PatternOptions patternOptions;
 
-    int totalBlocks;
-    int minedBlocks;
+    private int totalBlocks;
+    private int minedBlocks;
 
-    int resetOn;
+    private int resetOn;
 
     public boolean isAllowToBreakBlock(Block block) {
 

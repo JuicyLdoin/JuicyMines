@@ -50,7 +50,7 @@ public class MineBlocksListener implements IMineEditor {
                         Mine mine = mines.get(player);
                         MineOptions mineOptions = mine.getMineOptions();
 
-                        Map<Material, Double> blocks = mineOptions.getBlocks();
+                        Map<Material, Float> blocks = mineOptions.getBlocks();
 
                         event.setCancelled(true);
 
@@ -64,7 +64,7 @@ public class MineBlocksListener implements IMineEditor {
                         if (event.getClickedInventory().equals(player.getInventory())) {
 
                             if (!blocks.containsKey(block))
-                                blocks.put(block, shift ? 100.0 : 0.0);
+                                blocks.put(block, shift ? 100.0f : 0.0f);
 
 
                         } else if (editBlocks.get(player).equals(event.getClickedInventory())) {
@@ -75,7 +75,7 @@ public class MineBlocksListener implements IMineEditor {
                                 blocks.put(block, blocks.get(block) + amount);
 
                                 if (blocks.get(block) >= 100)
-                                    blocks.put(block, 100.0);
+                                    blocks.put(block, 100.0f);
 
                             }
 
@@ -85,7 +85,7 @@ public class MineBlocksListener implements IMineEditor {
                                 blocks.put(block, blocks.get(block) - amount);
 
                                 if (blocks.get(block) < 0)
-                                    blocks.put(block, 0.0);
+                                    blocks.put(block, 0.0f);
 
                             }
 
@@ -120,7 +120,7 @@ public class MineBlocksListener implements IMineEditor {
 
         int blocksDisplayed = 0;
 
-        for (Map.Entry<Material, Double> blocks : mineOptions.getBlocks().entrySet()) {
+        for (Map.Entry<Material, Float> blocks : mineOptions.getBlocks().entrySet()) {
 
             inventory.setItem(blocksDisplayed, ItemUtil.getItem(blocks.getKey(), 1, "§e" + blocks.getKey().name(),
                     "",

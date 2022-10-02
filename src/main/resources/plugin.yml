@@ -5,9 +5,10 @@ main: net.juicy.mines.JuicyMinesPlugin
 
 depend:
   - JuicyAPI
+  - MultiWorld
 api-version: 1.18
 author: Ldoin
 
 commands:
   juicymines:
-    aliases: [ juicymines, jmines, jm ]
+    aliases: [ jmines, jm ]

@@ -134,8 +134,10 @@ public class MineEditListener implements IMineEditor {
 
                     if (slot == 25) {
 
-                        MineLocationListener.mineLocations.createForPlayer(player, mine, "minLocation");
+                        mineOptions.setMinLocation(LocationUtil.setInt(player.getLocation()));
                         player.closeInventory();
+
+                        player.sendMessage(plugin.replace("%prefix% &fВы установили минимальную локацию!"));
 
                         return;
 
@@ -143,8 +145,10 @@ public class MineEditListener implements IMineEditor {
 
                     if (slot == 26) {
 
-                        MineLocationListener.mineLocations.createForPlayer(player, mine, "minLocation");
+                        mineOptions.setMaxLocation(LocationUtil.setInt(player.getLocation()));
                         player.closeInventory();
+
+                        player.sendMessage(plugin.replace("%prefix% &fВы установили максимальую локацию!"));
 
                         return;
 
@@ -259,7 +263,7 @@ public class MineEditListener implements IMineEditor {
         blocksLore.add("");
         blocksLore.add("§fСписок блоков:");
 
-        for (Map.Entry<Material, Double> chances : mineOptions.getBlocks().entrySet())
+        for (Map.Entry<Material, Float> chances : mineOptions.getBlocks().entrySet())
             blocksLore.add("§f- §e" + chances.getKey() + " §f(§e" + chances.getValue() + "%§f)");
 
         blocksLore.add("");

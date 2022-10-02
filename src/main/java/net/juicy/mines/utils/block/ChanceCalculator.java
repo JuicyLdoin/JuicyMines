@@ -11,26 +11,26 @@ import java.util.Map;
 @Value
 public class ChanceCalculator {
 
-    public static List<ChanceCalculator> calculate(Map<Material, Double> chances) {
+    public static List<ChanceCalculator> calculate(Map<Material, Float> chances) {
 
         List<ChanceCalculator> chanceList = new ArrayList<>();
-        Map<Material, Double> blocks = new HashMap<>(chances);
+        Map<Material, Float> blocks = new HashMap<>(chances);
 
-        double max = 0.0D;
+        float max = 0f;
 
-        for (Map.Entry<Material, Double> entry : blocks.entrySet())
-            max += entry.getValue();
+        for (double value : chances.values())
+            max += value;
 
-        if (max < 100.0D) {
+        if (max < 100f) {
 
-            blocks.put(Material.AIR, 100.0D - max);
-            max = 100.0D;
+            blocks.put(Material.AIR, 100f - max);
+            max = 100f;
 
         }
 
-        double chance = 0.0D;
+        float chance = 0f;
 
-        for (Map.Entry<Material, Double> entry : blocks.entrySet()) {
+        for (Map.Entry<Material, Float> entry : blocks.entrySet()) {
 
             chance += entry.getValue() / max;
             chanceList.add(new ChanceCalculator(entry.getKey(), chance));
@@ -42,6 +42,6 @@ public class ChanceCalculator {
     }
 
     Material block;
-    double chance;
+    float chance;
 
 }

@@ -3,10 +3,10 @@ package net.juicy.mines.mine.pattern;
 import lombok.Value;
 import net.juicy.mines.mine.Mine;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Value
 public class MinePatternCache {
@@ -16,7 +16,7 @@ public class MinePatternCache {
 
     public MinePattern getNext() {
 
-        return getPattern(patternQueue.poll());
+        return getPattern(patternQueue.peek());
 
     }
 
@@ -32,21 +32,16 @@ public class MinePatternCache {
         if (!pattern.getState().equals(MinePatternState.GENERATED))
             throw new UnsupportedOperationException("MinePattern isn't generated!");
 
-        /*
-            Если настройка паттернов "cycle" включена, помещаем паттерн в конец очереди
-            Если настройка паттернов "cycle" выключена, генерируем новый паттерн
-         */
+        // Если настройка паттернов "cycle" выключена, генерируем новый паттерн
 
-        if (mine.getMineOptions().getPatternOptions().isCycle())
-            patternQueue.offer(pattern);
-        else {
+        if (!mine.getMineOptions().getPatternOptions().isCycle()) {
 
             pattern.setState(MinePatternState.USED);
             mine.generatePattern();
 
-        }
+            patternQueue.remove(pattern);
 
-        patternQueue.remove(pattern);
+        }
 
         return pattern;
 
@@ -65,13 +60,9 @@ public class MinePatternCache {
 
         // Возвращаем все паттерны со статусом {state}
 
-        List<MinePattern> patterns = new ArrayList<>();
-
-        patternQueue.stream()
+        return patternQueue.stream()
                 .filter(pattern -> pattern.getState().equals(state))
-                .forEach(patterns::add);
-
-        return patterns;
+                .collect(Collectors.toList());
 
     }
 }

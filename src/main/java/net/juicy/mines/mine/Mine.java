@@ -38,7 +38,7 @@ public class Mine {
 
     MineOptions mineOptions;
 
-    public Mine(String name, Location minLocation, Location maxLocation, int resetTime, Map<Material, Double> blocks) {
+    public Mine(String name, Location minLocation, Location maxLocation, int resetTime, Map<Material, Float> blocks) {
 
         this.name = name;
         logger = new JuicyLoggerElement(name, JuicyMinesPlugin.getPlugin().getMineManager().getMineLogger());
@@ -55,11 +55,12 @@ public class Mine {
         logger = new JuicyLoggerElement(name, JuicyMinesPlugin.getPlugin().getMineManager().getMineLogger());
 
         String stringBlocks = mineSection.getString("blocks");
-        Map<Material, Double> blocks = new HashMap<>();
+        Map<Material, Float> blocks = new HashMap<>();
 
         if (!stringBlocks.isEmpty())
             for (String block : stringBlocks.split("___"))
-                blocks.put(Material.getMaterial(block.split("-")[0]), Double.parseDouble(block.split("-")[1]));
+                if (!block.equals(""))
+                    blocks.put(Material.getMaterial(block.split("-")[0]), Float.parseFloat(block.split("-")[1]));
 
         mineOptions = new MineOptions(LocationUtil.getLocation(mineSection.getString("minLocation")), LocationUtil.getLocation(mineSection.getString("maxLocation")),
                 mineSection.getInt("resetTime"), mineSection.getInt("toReset"), new MinePatternCache(this, new LinkedList<>()), blocks, runTask(),
@@ -92,7 +93,7 @@ public class Mine {
                 .forEach(player -> {
 
                     Location location = player.getLocation().clone();
-                    location.setY(mineOptions.getMaxLocation().getBlockY());
+                    location.setY(mineOptions.getMaxLocation().getBlockY() + 1);
 
                     player.teleport(location);
 
@@ -149,20 +150,20 @@ public class Mine {
             List<ChanceCalculator> chances = ChanceCalculator.calculate(mineOptions.getBlocks());
 
             if (!chances.isEmpty())
-                IntStream.range(minLocation.getBlockX(), maxLocation.getBlockX())
-                        .forEach(x ->
-                                IntStream.range(minLocation.getBlockX(), maxLocation.getBlockX())
-                                .forEach(y ->
-                                        IntStream.range(minLocation.getBlockX(), maxLocation.getBlockX())
-                                        .forEach(z -> {
+                for (int x = minLocation.getBlockX(); x <= maxLocation.getBlockX(); x++)
+                    for (int y = minLocation.getBlockY(); y <= maxLocation.getBlockY(); y++)
+                        for (int z = minLocation.getBlockZ(); z <= maxLocation.getBlockZ(); z++) {
 
-                                            double random = ThreadLocalRandom.current().nextDouble();
+                            float random = ThreadLocalRandom.current().nextFloat();
 
-                                            chances.stream()
-                                                    .filter(chance -> random <= chance.getChance())
-                                                    .forEach(chance -> minePattern.addBlock(new MinePatternBlock(new Location(minLocation.getWorld(), x, y, z), chance.getBlock())));
+                            for (ChanceCalculator chance : chances)
+                                if (random <= chance.getChance()) {
 
-                                        })));
+                                    minePattern.addBlock(new MinePatternBlock(new Location(minLocation.getWorld(), x, y, z), chance.getBlock()));
+                                    break;
+
+                                }
+                        }
 
             // Устанавливает статус паттерна как сгенерированный
 
@@ -194,7 +195,7 @@ public class Mine {
 
         StringBuilder stringBuilder = new StringBuilder();
 
-        for (Map.Entry<Material, Double> entry : mineOptions.getBlocks().entrySet())
+        for (Map.Entry<Material, Float> entry : mineOptions.getBlocks().entrySet())
             stringBuilder.append(entry.getKey().name()).append("-").append(entry.getValue()).append("___");
 
         mineSection.set("blocks", stringBuilder.toString());
@@ -237,16 +238,23 @@ public class Mine {
 
             public void run() {
 
-                if (mineOptions.getResetOn() >= 0)
-                    if (100 - mineOptions.getMinedPercentage() <= mineOptions.getResetOn())
-                        fill();
+                try {
 
-                if (mineOptions.getResetTime() > 0) {
+                    if (mineOptions.getResetOn() >= 0)
+                        if (100 - mineOptions.getMinedPercentage() <= mineOptions.getResetOn())
+                            fill();
 
-                    mineOptions.setToReset(mineOptions.getToReset() - 1);
+                    if (mineOptions.getResetTime() > 0) {
 
-                    if (mineOptions.getToReset() == 0)
-                        fill();
+                        mineOptions.setToReset(mineOptions.getToReset() - 1);
+
+                        if (mineOptions.getToReset() == 0)
+                            fill();
+
+                    }
+                } catch (Exception ignored) {
+
+                    logger.addMessage("Try to fill, but pattern isn't found");
 
                 }
             }

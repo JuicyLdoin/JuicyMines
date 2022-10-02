@@ -4,6 +4,7 @@ import lombok.Getter;
 import net.juicy.api.JuicyAPIPlugin;
 import net.juicy.api.JuicyPlugin;
 import net.juicy.api.utils.command.CommandManager;
+import net.juicy.api.utils.command.ICommand;
 import net.juicy.api.utils.load.Loader;
 import net.juicy.mines.commands.*;
 import net.juicy.mines.listener.ListenersManager;
@@ -35,7 +36,7 @@ public final class JuicyMinesPlugin extends JuicyPlugin {
 
         try {
 
-            List<Class<?>> classes = new ArrayList<>();
+            List<Class<? extends ICommand>> classes = new ArrayList<>();
 
             classes.add(MineCreateCommand.class);
             classes.add(MineDeleteCommand.class);
@@ -43,7 +44,7 @@ public final class JuicyMinesPlugin extends JuicyPlugin {
             classes.add(MineFillCommand.class);
             classes.add(MineHelpCommand.class);
 
-            loader.load(new CommandManager(this, getCommand("juicymines").getAliases(), classes));
+            loader.load(new CommandManager(this, "juicymines", getCommand("juicymines").getAliases(), classes));
 
         } catch (Exception exception) {
 

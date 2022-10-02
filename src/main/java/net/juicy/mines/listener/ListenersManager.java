@@ -16,7 +16,6 @@ public class ListenersManager extends LoadableList {
 
         list.add(MineBlocksListener.mineBlocks);
         list.add(MineEditListener.mineEditor);
-        list.add(MineLocationListener.mineLocations);
         list.add(MineRenameListener.mineRename);
 
         list.add(new BlockBreakListener());
