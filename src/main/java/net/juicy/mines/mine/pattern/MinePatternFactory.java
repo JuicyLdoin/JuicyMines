@@ -4,6 +4,7 @@ import lombok.NonNull;
 import net.juicy.mines.JuicyMinesPlugin;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ThreadFactory;
 
@@ -21,7 +22,7 @@ public class MinePatternFactory implements ThreadFactory, Runnable {
 
     private MinePatternFactory() {
 
-        threads = new ArrayList<>();
+        threads = Collections.synchronizedList(new ArrayList<>());
 
         new Thread(this).start();
 
@@ -41,10 +42,7 @@ public class MinePatternFactory implements ThreadFactory, Runnable {
     public void run() {
 
         while (JuicyMinesPlugin.getPlugin().isEnabled())
-            synchronized (threads) {
+            threads.removeIf(thread -> !thread.isAlive());
 
-                threads.removeIf(thread -> !thread.isAlive());
-
-            }
     }
 }
