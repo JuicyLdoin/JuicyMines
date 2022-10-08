@@ -7,10 +7,7 @@ import net.juicy.api.utils.util.LocationUtil;
 import net.juicy.mines.JuicyMinesPlugin;
 import net.juicy.mines.mine.options.MineOptions;
 import net.juicy.mines.mine.options.PatternOptions;
-import net.juicy.mines.mine.pattern.MinePattern;
-import net.juicy.mines.mine.pattern.MinePatternBlock;
-import net.juicy.mines.mine.pattern.MinePatternCache;
-import net.juicy.mines.mine.pattern.MinePatternState;
+import net.juicy.mines.mine.pattern.*;
 import net.juicy.mines.utils.block.ChanceCalculator;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -136,7 +133,7 @@ public class Mine {
 
         // Запускает новый поток для генерации
 
-        new Thread(() -> {
+        MinePatternFactory.getInstance().newThread(() -> {
 
             logger.addMessage("Start to generate pattern (" + minePattern.getUuid() + ") for " + name);
 
@@ -174,7 +171,7 @@ public class Mine {
 
             logger.addMessage("The pattern (" + minePattern.getUuid() + ") for mine " + name + " was generated for " + minePattern.getGeneratedPer() + "ms");
 
-        }, name + "PatternGenerator-" + (mineOptions.getPatternCache().getPatternsWithState(MinePatternState.GENERATION).size() + 1)).start();
+        });
 
         return minePattern;
 
