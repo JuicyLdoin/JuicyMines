@@ -154,7 +154,7 @@ public class MineEditListener implements IMineEditor {
 
                     }
 
-                    if (currentItem.getType().equals(Material.AMETHYST_SHARD))
+                    if (currentItem.getType().equals(Material.CLOCK))
                         if (slot >= 36 && slot <= 44) {
 
                             UUID patternUUID = UUID.fromString(ChatColor.stripColor(currentItem.getItemMeta().getDisplayName().split(" - ")[1]));
@@ -202,7 +202,7 @@ public class MineEditListener implements IMineEditor {
 
         for (MinePattern minePattern : mineOptions.getPatternCache().getPatternQueue()) {
 
-            inventory.setItem(36 + displayedPatters, ItemUtil.getItem(Material.AMETHYST_SHARD, 1, "§fПаттерн - §e" + minePattern.getUuid(),
+            inventory.setItem(36 + displayedPatters, ItemUtil.getItem(Material.CLOCK, 1, "§fПаттерн - §e" + minePattern.getUuid(),
                     "",
                     "§fДата генерации: §e" + minePattern.getGeneratedOn().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")),
                     "§fСгенерирован за: §e" + minePattern.getGeneratedPer() + "ms",
