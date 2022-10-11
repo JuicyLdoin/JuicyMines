@@ -3,6 +3,7 @@ package net.juicy.mines.mine;
 import lombok.Getter;
 import lombok.Setter;
 import net.juicy.api.utils.log.JuicyLoggerElement;
+import net.juicy.api.utils.util.EmptyGeneratorUtil;
 import net.juicy.api.utils.util.LocationUtil;
 import net.juicy.mines.JuicyMinesPlugin;
 import net.juicy.mines.mine.options.MineOptions;
@@ -12,6 +13,7 @@ import net.juicy.mines.utils.block.ChanceCalculator;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.WorldCreator;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -40,6 +42,9 @@ public class Mine {
         this.name = name;
         logger = new JuicyLoggerElement(name, JuicyMinesPlugin.getPlugin().getMineManager().getMineLogger());
 
+        if (!minLocation.isWorldLoaded())
+            new WorldCreator(minLocation.getWorld().getName()).generator(new EmptyGeneratorUtil()).createWorld();
+
         mineOptions = new MineOptions(minLocation, maxLocation, resetTime, resetTime, new MinePatternCache(this, new LinkedList<>()), blocks, runTask(), new PatternOptions(3, false), 0, 0, 50);
 
     }
@@ -59,7 +64,12 @@ public class Mine {
                 if (!block.equals(""))
                     blocks.put(Material.getMaterial(block.split("-")[0]), Float.parseFloat(block.split("-")[1]));
 
-        mineOptions = new MineOptions(LocationUtil.getLocation(mineSection.getString("minLocation")), LocationUtil.getLocation(mineSection.getString("maxLocation")),
+        Location minLocation = LocationUtil.getLocation(mineSection.getString("minLocation"));
+
+        if (!minLocation.isWorldLoaded())
+            new WorldCreator(minLocation.getWorld().getName()).generator(new EmptyGeneratorUtil()).createWorld();
+
+        mineOptions = new MineOptions(minLocation, LocationUtil.getLocation(mineSection.getString("maxLocation")),
                 mineSection.getInt("resetTime"), mineSection.getInt("toReset"), new MinePatternCache(this, new LinkedList<>()), blocks, runTask(),
                 new PatternOptions(mineSection.getInt("patternAmount"), mineSection.getBoolean("patternCycle")),
                 mineSection.getInt("totalBlocks"), mineSection.getInt("minedBlocks"), mineSection.getInt("resetOn"));

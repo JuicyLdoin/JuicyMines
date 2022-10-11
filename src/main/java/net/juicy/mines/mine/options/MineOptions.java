@@ -1,8 +1,7 @@
 package net.juicy.mines.mine.options;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 import net.juicy.mines.mine.pattern.MinePatternCache;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -11,8 +10,7 @@ import org.bukkit.entity.Player;
 
 import java.util.Map;
 
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 public class MineOptions {
 
