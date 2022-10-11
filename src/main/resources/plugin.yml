@@ -2,11 +2,11 @@ name: JuicyMines
 version: '${project.version}'
 
 main: net.juicy.mines.JuicyMinesPlugin
-api-version: 1.13+
+api-version: 1.16
 
 author: Ldoin
 
-depend:
+dependencies:
   - JuicyAPI
 
 commands:
