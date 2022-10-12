@@ -42,9 +42,6 @@ public class Mine {
         this.name = name;
         logger = new JuicyLoggerElement(name, JuicyMinesPlugin.getPlugin().getMineManager().getMineLogger());
 
-        if (!minLocation.isWorldLoaded())
-            new WorldCreator(minLocation.getWorld().getName()).generator(new EmptyGeneratorUtil()).createWorld();
-
         mineOptions = new MineOptions(minLocation, maxLocation, resetTime, resetTime, new MinePatternCache(this, new LinkedList<>()), blocks, runTask(), new PatternOptions(3, false), 0, 0, 50);
 
     }
@@ -64,10 +61,11 @@ public class Mine {
                 if (!block.equals(""))
                     blocks.put(Material.getMaterial(block.split("-")[0]), Float.parseFloat(block.split("-")[1]));
 
-        Location minLocation = LocationUtil.getLocation(mineSection.getString("minLocation"));
+        String minLocationString = mineSection.getString("minLocation");
+        Location minLocation = LocationUtil.getLocation(minLocationString);
 
         if (!minLocation.isWorldLoaded())
-            new WorldCreator(minLocation.getWorld().getName()).generator(new EmptyGeneratorUtil()).createWorld();
+            new WorldCreator(minLocationString.split(" ")[0]).generator(new EmptyGeneratorUtil()).createWorld();
 
         mineOptions = new MineOptions(minLocation, LocationUtil.getLocation(mineSection.getString("maxLocation")),
                 mineSection.getInt("resetTime"), mineSection.getInt("toReset"), new MinePatternCache(this, new LinkedList<>()), blocks, runTask(),
