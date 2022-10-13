@@ -65,7 +65,7 @@ public class Mine {
         Location minLocation = LocationUtil.getLocation(minLocationString);
 
         if (!minLocation.isWorldLoaded())
-            new WorldCreator(minLocationString.split(" ")[0]).generator(new EmptyGeneratorUtil()).createWorld();
+            minLocation.setWorld(new WorldCreator(minLocationString.split(" ")[0]).generator(new EmptyGeneratorUtil()).createWorld());
 
         mineOptions = new MineOptions(minLocation, LocationUtil.getLocation(mineSection.getString("maxLocation")),
                 mineSection.getInt("resetTime"), mineSection.getInt("toReset"), new MinePatternCache(this, new LinkedList<>()), blocks, runTask(),
